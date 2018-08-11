@@ -1409,6 +1409,22 @@ class MusicBot(discord.Client):
                 expire_in=30
             )
         return True
+    
+    async def cmd_playnext(self, message, player, channel, author, permissions, leftover_args, song_url):
+        """
+        Usage:
+            {command_prefix}playnext song_link
+            {command_prefix}playnext text to search for
+            {command_prefix}playnext spotify_uri
+
+        Adds the song to the beginning of the playlist.  If a link is not provided, the first
+        result from a youtube search is added to the front of the queue.
+        
+        If enabled in the config, the bot will also support Spotify URIs, however
+        it will use the metadata (e.g song name and artist) to find a YouTube
+        equivalent of the song. Streaming from Spotify is not possible.
+        """
+        return await self._cmd_play(message, player, channel, author, permissions, leftover_args, song_url, True)
 
     async def cmd_play(self, message, player, channel, author, permissions, leftover_args, song_url):
         """
@@ -1423,6 +1439,16 @@ class MusicBot(discord.Client):
         If enabled in the config, the bot will also support Spotify URIs, however
         it will use the metadata (e.g song name and artist) to find a YouTube
         equivalent of the song. Streaming from Spotify is not possible.
+        """
+
+        return await self._cmd_play(message, player, channel, author, permissions, leftover_args, song_url, False)
+        
+    async def _cmd_play(self, message, player, channel, author, permissions, leftover_args, song_url, head=False):
+        """
+        Adds the song to the playlist according to the "head" flag. If head is True,
+        the song is added to the beginning of the queue, otherwise it is added to the 
+        end of the queue. If a link is not provided, the first result from a youtube
+        search is added to the queue.
         """
 
         song_url = song_url.strip('<>')
@@ -1643,7 +1669,7 @@ class MusicBot(discord.Client):
                     )
 
                 try:
-                    entry, position = await player.playlist.add_entry(song_url, channel=channel, author=author)
+                    entry, position = await player.playlist.add_entry(song_url, head, channel=channel, author=author)
 
                 except exceptions.WrongEntryTypeError as e:
                     if e.use_url == song_url:
@@ -1664,13 +1690,19 @@ class MusicBot(discord.Client):
 
             else:
                 try:
-                    time_until = await player.playlist.estimate_time_until(position, player)
+                    if head:
+                        time_until = await player.playlist.estimate_time_until(1, player)
+                    else:
+                        time_until = await player.playlist.estimate_time_until(position, player)
                     reply_text += self.str.get('cmd-play-eta', ' - estimated time until playing: %s')
                 except:
                     traceback.print_exc()
                     time_until = ''
-
-                reply_text %= (btext, position, ftimedelta(time_until))
+                
+                if head:
+                    reply_text %= (btext, 1, ftimedelta(time_until))
+                else:
+                    reply_text %= (btext, position, ftimedelta(time_until))
 
         return Response(reply_text, delete_after=30)
 
