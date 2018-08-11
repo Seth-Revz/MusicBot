@@ -1355,7 +1355,7 @@ class MusicBot(discord.Client):
                 self.autoplaylist.append(url)
                 write_file(self.config.auto_playlist_file, self.autoplaylist)
                 log.debug("Appended {} to autoplaylist".format(url))
-                return Response(self.str.get('cmd-save-success', 'Added <{0}> to the autoplaylist.').format(url))
+                return Response(self.str.get('cmd-save-success', 'Added <{0}> to the autoplaylist.').format(url), delete_after=30)
             else:
                 raise exceptions.CommandError(self.str.get('cmd-save-exists', 'This song is already in the autoplaylist.'))
         else:
