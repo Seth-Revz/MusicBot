@@ -1503,7 +1503,7 @@ class MusicBot(discord.Client):
         
         player.autoplaylist = list(set(self.autoplaylist))
         
-        await self.cmd_skip(player, channel, author, message, permissions, voice_channel, '')
+        await self.cmd_skip(player, channel, author, message, permissions, voice_channel)
         
         return Response(self.str.get("cmd-load-playlist", "Loaded <{0}> playlist.").format(self.genre), delete_after=30)
     
@@ -2274,13 +2274,13 @@ class MusicBot(discord.Client):
                 self.str.get('cmd-remove-noperms', "You do not have the valid permissions to remove that entry from the queue, make sure you're the one who queued it or have instant skip permissions"), expire_in=20
             )
 
-    async def cmd_skip(self, player, channel, author, message, permissions, voice_channel, param=''):
+    async def cmd_skip(self, player, channel, author, message, permissions, voice_channel):
         """
         Usage:
             {command_prefix}skip [force/f]
 
         Skips the current song when enough votes are cast.
-        Owners and those with the instaskip permission can add 'force' or 'f' after the command to force skip.
+        Owners and those with the instaskip permission will force skip.
         """
 
         if player.is_stopped:
@@ -2299,17 +2299,16 @@ class MusicBot(discord.Client):
             else:
                 print("Something strange is happening.  "
                       "You might want to restart the bot if it doesn't start working.")
-
-        if param.lower() in ['force', 'f']:
-            if author.id == self.config.owner_id \
-                or permissions.instaskip \
-                    or (self.config.allow_author_skip and author == player.current_entry.meta.get('author', None)):
-
-                player.skip()  # TODO: check autopause stuff here
-                await self._manual_delete_check(message)
-                return Response(self.str.get('cmd-skip-force', 'Force skipped `{}`.').format(player.current_entry.title), reply=True, delete_after=30)
-            else:
-                raise exceptions.PermissionsError(self.str.get('cmd-skip-force-noperms', 'You do not have permission to force skip.'), expire_in=30)
+            
+        if author.id == self.config.owner_id \
+            or permissions.instaskip \
+                or (self.config.allow_author_skip and author == player.current_entry.meta.get('author', None)):
+            
+            player.skip()  # TODO: check autopause stuff here
+            await self._manual_delete_check(message)
+            return Response(self.str.get('cmd-skip-force', 'Force skipped `{}`.').format(player.current_entry.title), reply=True, delete_after=30)
+        else:
+            raise exceptions.PermissionsError(self.str.get('cmd-skip-force-noperms', 'You do not have permission to force skip.'), expire_in=30)
 
         # TODO: ignore person if they're deaf or take them out of the list or something?
         # Currently is recounted if they vote, deafen, then vote
