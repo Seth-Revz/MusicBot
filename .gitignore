@@ -12,6 +12,15 @@ data/
 config/options.ini
 config/permissions.ini
 config/autoplaylist.txt
+config/rapplaylist.txt
+config/rockplaylist.txt
+config/popplaylist.txt
+config/eurobeatplaylist.txt
+config/chillplaylist.txt
+config/8bitplaylist.txt
+config/cardibplaylist.txt
+config/postyplaylist.txt
+
 config/autoplaylist_removed.txt
 config/whitelist.txt
 config/blacklist.txt
