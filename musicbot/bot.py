@@ -2301,12 +2301,13 @@ class MusicBot(discord.Client):
                       "You might want to restart the bot if it doesn't start working.")
             
         if author.id == self.config.owner_id \
-            or permissions.instaskip \
+                or permissions.instaskip \
                 or (self.config.allow_author_skip and author == player.current_entry.meta.get('author', None)):
             
+            now_playing = player.current_entry.title
             player.skip()  # TODO: check autopause stuff here
             await self._manual_delete_check(message)
-            return Response(self.str.get('cmd-skip-force', 'Force skipped `{}`.').format(player.current_entry.title), reply=True, delete_after=30)
+            return Response(self.str.get('cmd-skip-force', 'Force skipped `{}`.').format(now_playing), reply=True, delete_after=30)
         else:
             raise exceptions.PermissionsError(self.str.get('cmd-skip-force-noperms', 'You do not have permission to force skip.'), expire_in=30)
 
