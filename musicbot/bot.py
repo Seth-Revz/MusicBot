@@ -2169,7 +2169,7 @@ class MusicBot(discord.Client):
 
         if player.is_playing:
             player.pause()
-            return Response(self.str.get('cmd-pause-reply', 'Paused music in `{0.name}`').format(player.voice_client.channel))
+            return Response(self.str.get('cmd-pause-reply', 'Paused music in `{0.name}`').format(player.voice_client.channel), delete_after=30)
 
         else:
             raise exceptions.CommandError(self.str.get('cmd-pause-none', 'Player is not playing.'), expire_in=30)
