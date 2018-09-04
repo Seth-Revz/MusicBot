@@ -75,7 +75,6 @@ class MusicBot(discord.Client):
 
         self.blacklist = set(load_file(self.config.blacklist_file))
         self.autoplaylist = load_file(self.config.auto_playlist_file)
-        self.genre = "Default"
 
         self.aiolocks = defaultdict(asyncio.Lock)
         self.downloader = downloader.Downloader(download_folder='audio_cache')
@@ -1354,23 +1353,23 @@ class MusicBot(discord.Client):
 
             if url not in self.autoplaylist:
                 self.autoplaylist.append(url)
-                if self.genre == "Default":
+                if player.playlist_genre == "Default":
                     write_file(self.config.auto_playlist_file, self.autoplaylist)
-                if self.genre == "Rock":
+                if player.playlist_genre == "Rock":
                     write_file("config/rockplaylist.txt", self.autoplaylist)
-                if self.genre == "Rap":
+                if player.playlist_genre == "Rap":
                     write_file("config/rapplaylist.txt", self.autoplaylist)
-                if self.genre == "Chill":
+                if player.playlist_genre == "Chill":
                     write_file("config/chillplaylist.txt", self.autoplaylist)
-                if self.genre == "Pop":
+                if player.playlist_genre == "Pop":
                     write_file("config/popplaylist.txt", self.autoplaylist)
-                if self.genre == "Eurobeat":
+                if player.playlist_genre == "Eurobeat":
                     write_file("config/eurobeatplaylist.txt", self.autoplaylist)
-                if self.genre == "8bit":
+                if player.playlist_genre == "8bit":
                     write_file("config/8bitplaylist.txt", self.autoplaylist)
-                if self.genre == "Cardib":
+                if player.playlist_genre == "Cardib":
                     write_file("config/cardibplaylist.txt", self.autoplaylist)
-                if self.genre == "Posty":
+                if player.playlist_genre == "Posty":
                     write_file("config/postyplaylist.txt", self.autoplaylist)
 
                 log.debug("Appended {} to autoplaylist".format(url))
@@ -1394,23 +1393,23 @@ class MusicBot(discord.Client):
 
             if url in self.autoplaylist:
                 self.autoplaylist.remove(url)
-                if self.genre == "Default":
+                if player.playlist_genre == "Default":
                     write_file(self.config.auto_playlist_file, self.autoplaylist)
-                if self.genre == "Rock":
+                if player.playlist_genre == "Rock":
                     write_file("config/rockplaylist.txt", self.autoplaylist)
-                if self.genre == "Rap":
+                if player.playlist_genre == "Rap":
                     write_file("config/rapplaylist.txt", self.autoplaylist)
-                if self.genre == "Chill":
+                if player.playlist_genre == "Chill":
                     write_file("config/chillplaylist.txt", self.autoplaylist)
-                if self.genre == "Pop":
+                if player.playlist_genre == "Pop":
                     write_file("config/popplaylist.txt", self.autoplaylist)
-                if self.genre == "Eurobeat":
+                if player.playlist_genre == "Eurobeat":
                     write_file("config/eurobeatplaylist.txt", self.autoplaylist)
-                if self.genre == "8bit":
+                if player.playlist_genre == "8bit":
                     write_file("config/8bitplaylist.txt", self.autoplaylist)
-                if self.genre == "Cardib":
+                if player.playlist_genre == "Cardib":
                     write_file("config/cardibplaylist.txt", self.autoplaylist)
-                if self.genre == "Posty":
+                if player.playlist_genre == "Posty":
                     write_file("config/postyplaylist.txt", self.autoplaylist)
 
                 log.debug('Removed {} from autoplaylist'.format(url))
@@ -1472,43 +1471,43 @@ class MusicBot(discord.Client):
     async def cmd_load(self, player, channel, author, message, permissions, voice_channel, genre=None):
         
         if genre != "rock" and genre!= "rap" and genre != "chill" and genre != "pop" and genre != "cardib" and genre != "posty" and genre != None:
-            return Response(self.str.get("cmd-load-playlist-failed", "Playlist doesn't exist. Available playlist are chill, rap, rock, pop, cardib."), delete_after=30)
+            return Response(self.str.get("cmd-load-playlist-failed", "Playlist doesn't exist. Available playlist are chill, rap, rock, pop, cardib, posty."), delete_after=30)
         if not genre:
             self.autoplaylist = load_file("config/autoplaylist.txt")
-            self.genre = "Default"
+            player.playlist_genre = "Default"
         if genre == "rock":
             self.autoplaylist = load_file("config/rockplaylist.txt")
-            self.genre = "Rock"
+            player.playlist_genre = "Rock"
         if genre == "rap":
             self.autoplaylist = load_file("config/rapplaylist.txt")
-            self.genre = "Rap"
+            player.playlist_genre = "Rap"
         if genre == "chill":
             self.autoplaylist = load_file("config/chillplaylist.txt")
-            self.genre = "Chill"
+            player.playlist_genre = "Chill"
         if genre == "pop":
             self.autoplaylist = load_file("config/popplaylist.txt")
-            self.genre = "Pop"
+            player.playlist_genre = "Pop"
         if genre == "eurobeat":
             self.autoplaylist = load_file("config/eurobeatplaylist.txt")
-            self.genre = "Eurobeat"
+            player.playlist_genre = "Eurobeat"
         if genre == "8bit":
             self.autoplaylist = load_file("config/8bitplaylist.txt")
-            self.genre = "8bit"
+            player.playlist_genre = "8bit"
         if genre == "cardib":
             self.autoplaylist = load_file("config/cardibplaylist.txt")
-            self.genre = "Cardib"
+            player.playlist_genre = "Cardib"
         if genre == "posty":
             self.autoplaylist = load_file("config/postyplaylist.txt")
-            self.genre = "Posty"
+            player.playlist_genre = "Posty"
         
         player.autoplaylist = list(set(self.autoplaylist))
         
         await self.cmd_skip(player, channel, author, message, permissions, voice_channel)
         
-        return Response(self.str.get("cmd-load-playlist", "Loaded <{0}> playlist.").format(self.genre), delete_after=30)
+        return Response(self.str.get("cmd-load-playlist", "Loaded <{0}> playlist.").format(player.playlist_genre), delete_after=30)
     
-    async def cmd_whatsloaded(self):
-        return Response(self.str.get("cmd-whats-loaded", "<{0}> playlist is loaded").format(self.genre), delete_after=30)
+    async def cmd_whatsloaded(self, player):
+        return Response(self.str.get("cmd-whats-loaded", "<{0}> playlist is loaded").format(player.playlist_genre), delete_after=30)
 
     async def cmd_playnext(self, message, player, channel, author, permissions, leftover_args, song_url):
         """
