@@ -82,7 +82,7 @@ class MusicBot(discord.Client):
 
         self._setup_logging()
 
-        log.info('Starting MusicBot {}'.format(BOTVERSION))
+        log.info('Starting MusicBot {} Modified'.format(BOTVERSION))
 
         if not self.autoplaylist:
             log.warning("Autoplaylist is empty, disabling.")
@@ -1224,7 +1224,7 @@ class MusicBot(discord.Client):
         """Provides a basic template for embeds"""
         e = discord.Embed()
         e.colour = 7506394
-        e.set_footer(text='Just-Some-Bots/MusicBot ({})'.format(BOTVERSION), icon_url='https://i.imgur.com/gFHBoZA.png')
+        e.set_footer(text='Seth-Revz/MusicBot ({}) Modified'.format(BOTVERSION), icon_url='https://i.imgur.com/gFHBoZA.png')
         e.set_author(name=self.user.name, url='https://github.com/Just-Some-Bots/MusicBot', icon_url=self.user.avatar_url)
         return e
 
