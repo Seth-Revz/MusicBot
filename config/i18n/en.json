@@ -14,6 +14,7 @@
     "cmd-save-invalid": "There is no valid song playing.",
     "cmd-save-success": "Added <{0}> to the autoplaylist.",
     "cmd-load-playlist": "Loaded <{0}> playlist.",
+    "cmd-whats-loaded": "<{0}> playlist is loaded",
     "cmd-load-playlist-failed": "Playlist doesn't exist.",
     "cmd-unsave-does-not-exist": "This song is not yet in the autoplaylist.",
     "cmd-unsave-invalid": "The supplied song is invalid.",

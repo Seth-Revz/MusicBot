@@ -1507,6 +1507,9 @@ class MusicBot(discord.Client):
         
         return Response(self.str.get("cmd-load-playlist", "Loaded <{0}> playlist.").format(self.genre), delete_after=30)
     
+    async def cmd_whatsloaded(self):
+        return Response(self.str.get("cmd-whats-loaded", "<{0}> playlist is loaded").format(self.genre), delete_after=30)
+
     async def cmd_playnext(self, message, player, channel, author, permissions, leftover_args, song_url):
         """
         Usage:
